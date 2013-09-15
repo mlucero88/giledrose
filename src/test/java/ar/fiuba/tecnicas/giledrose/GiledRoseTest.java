@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+/* Tests del metodo updateQuality para diferentes escenarios e items */
 public class GiledRoseTest {
 	private static final String NAME_VEST = "+5 Dexterity Vest";
 	private static final String NAME_BRIE = "Aged Brie";
@@ -12,12 +13,13 @@ public class GiledRoseTest {
 	private static final String NAME_BACKSTAGE =
 			"Backstage passes to a TAFKAL80ETC concert";
 	private static final String NAME_CAKE = "Conjured Mana Cake";
-
 	private static Item testedItem;
 	private static Inventory testedInventory;
 
-	/* Tests del metodo updateQuality para diferentes escenarios e items */
-	public void setUpOneItem(String nameItem, int sellInItem, int qualityItem) {
+	/* Método para inicializar un Inventory con un solo Item y actualizar su
+	 * quality */
+	public void updateQualityOneItem(String nameItem, int sellInItem,
+			int qualityItem) {
 		testedItem = new Item(nameItem, sellInItem, qualityItem);
 		testedInventory = new Inventory(new Item[] { testedItem });
 		testedInventory.updateQuality();
@@ -25,47 +27,47 @@ public class GiledRoseTest {
 
 	/* Tests VEST */
 	@Test
-	public void testVestQualityGreaterThanOneSellInEqualsZero() {
+	public void testVestQualityGreaterThanOneAndSellInEqualsZero() {
 		/* 1 < quality */
 		/* sellIn = 0 */
 		final int sellIn = 0;
-		final int quality = 2;
-		setUpOneItem(NAME_VEST, sellIn, quality);
+		final int quality = 10;
+		updateQualityOneItem(NAME_VEST, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality - 2, testedItem.getQuality());
 	}
 
 	@Test
-	public void testVestQualityAndSellInGreaterThanOne() {
-		/* 1 < quality */
-		/* 1 < sellIn */
-		final int sellIn = 2;
-		final int quality = 2;
-		setUpOneItem(NAME_VEST, sellIn, quality);
-		assertEquals(sellIn - 1, testedItem.getSellIn());
-		assertEquals(quality - 1, testedItem.getQuality());
-	}
-
-	@Test
-	public void testVestQualityEqualsOneAndSellInGreaterThanOne() {
+	public void testVestQualityEqualsOneAndSellInEqualsZero() {
 		/* quality = 1 */
-		/* 1 < sellIn */
-		final int sellIn = 3;
+		/* sellIn = 0 */
+		final int sellIn = 0;
 		final int quality = 1;
-		setUpOneItem(NAME_VEST, sellIn, quality);
+		updateQualityOneItem(NAME_VEST, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality - 1, testedItem.getQuality());
 	}
 
 	@Test
-	public void testVestQualityEqualsZeroAndSellInNegative() {
+	public void testVestQualityEqualsZeroAndSellInEqualsZero() {
 		/* quality = 0 */
-		/* sellIn < 0 */
-		final int sellIn = -1;
+		/* sellIn = 0 */
+		final int sellIn = 0;
 		final int quality = 0;
-		setUpOneItem(NAME_VEST, sellIn, quality);
+		updateQualityOneItem(NAME_VEST, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality, testedItem.getQuality());
+	}
+
+	@Test
+	public void testVestQualityAndSellInGreaterThanZero() {
+		/* 0 < quality */
+		/* 0 < sellIn */
+		final int sellIn = 2;
+		final int quality = 2;
+		updateQualityOneItem(NAME_VEST, sellIn, quality);
+		assertEquals(sellIn - 1, testedItem.getSellIn());
+		assertEquals(quality - 1, testedItem.getQuality());
 	}
 
 	/* Tests BRIE */
@@ -75,255 +77,248 @@ public class GiledRoseTest {
 		/* sellIn = 0 */
 		final int sellIn = 0;
 		final int quality = 48;
-		setUpOneItem(NAME_BRIE, sellIn, quality);
+		updateQualityOneItem(NAME_BRIE, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality + 2, testedItem.getQuality());
 	}
 
 	@Test
-	public void testBrieQualityLessThan49AndPositiveSellIn() {
-		/* quality < 49 */
-		/* 0 < sellIn */
-		final int sellIn = 1;
-		final int quality = 1;
-		setUpOneItem(NAME_BRIE, sellIn, quality);
+	public void testBrieQualityEquals49AndSellInEqualsZero() {
+		/* quality = 49 */
+		/* sellIn = 0 */
+		final int sellIn = 0;
+		final int quality = 49;
+		updateQualityOneItem(NAME_BRIE, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality + 1, testedItem.getQuality());
 	}
 
 	@Test
-	public void testBrieQualityEquals50() {
+	public void testBrieQualityEquals50AndSellInEqualsZero() {
 		/* quality = 50 */
-		final int sellIn = -2;
+		/* sellIn = 0 */
+		final int sellIn = 0;
 		final int quality = 50;
-		setUpOneItem(NAME_BRIE, sellIn, quality);
+		updateQualityOneItem(NAME_BRIE, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality, testedItem.getQuality());
 	}
 
 	@Test
-	public void testBrieQualityEquals49() {
-		/* quality = 49 */
-		final int sellIn = -10;
-		final int quality = 49;
-		setUpOneItem(NAME_BRIE, sellIn, quality);
+	public void testBrieQualityLessThan49AndSellInGreaterThanZero() {
+		/* quality < 49 */
+		/* 0 < sellIn */
+		final int sellIn = 3;
+		final int quality = 10;
+		updateQualityOneItem(NAME_BRIE, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality + 1, testedItem.getQuality());
 	}
 
 	/* Tests ELIXIR */
 	@Test
-	public void testElixirQualityGreaterThanOneSellInEqualsZero() {
+	public void testElixirQualityGreaterThanOneAndSellInEqualsZero() {
 		/* 1 < quality */
 		/* sellIn = 0 */
 		final int sellIn = 0;
-		final int quality = 2;
-		setUpOneItem(NAME_ELIXIR, sellIn, quality);
+		final int quality = 10;
+		updateQualityOneItem(NAME_ELIXIR, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality - 2, testedItem.getQuality());
 	}
 
 	@Test
-	public void testElixirQualityAndSellInGreaterThanOne() {
-		/* 1 < quality */
-		/* 1 < sellIn */
-		final int sellIn = 2;
-		final int quality = 2;
-		setUpOneItem(NAME_ELIXIR, sellIn, quality);
-		assertEquals(sellIn - 1, testedItem.getSellIn());
-		assertEquals(quality - 1, testedItem.getQuality());
-	}
-
-	@Test
-	public void testElixirQualityEqualsOneAndSellInGreaterThanOne() {
+	public void testElixirQualityEqualsOneAndSellInEqualsZero() {
 		/* quality = 1 */
-		/* 1 < sellIn */
-		final int sellIn = 3;
+		/* sellIn = 0 */
+		final int sellIn = 0;
 		final int quality = 1;
-		setUpOneItem(NAME_ELIXIR, sellIn, quality);
+		updateQualityOneItem(NAME_ELIXIR, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality - 1, testedItem.getQuality());
 	}
 
 	@Test
-	public void testElixirQualityEqualsZeroAndSellInNegative() {
-		/* quality = 0 */
-		/* sellIn < 0 */
-		final int sellIn = -1;
-		final int quality = 0;
-		setUpOneItem(NAME_ELIXIR, sellIn, quality);
-		assertEquals(sellIn - 1, testedItem.getSellIn());
-		assertEquals(quality, testedItem.getQuality());
-	}
-
-	/* Tests SULFURAS */
-	@Test
-	public void testSulfurasPositiveQualityPositiveSellin() {
-		/* 0 < quality */
-		/* 0 < sellIn */
-		final int sellIn = 1;
-		final int quality = 50;
-		setUpOneItem(NAME_SULFURAS, sellIn, quality);
-		assertEquals(sellIn, testedItem.getSellIn());
-		assertEquals(quality, testedItem.getQuality());
-	}
-
-	@Test
-	public void testSulfurasPositiveQualityNegativeSellin() {
-		/* 0 < quality */
-		/* sellIn < 0 */
-		final int sellIn = -1;
-		final int quality = 10;
-		setUpOneItem(NAME_SULFURAS, sellIn, quality);
-		assertEquals(sellIn, testedItem.getSellIn());
-		assertEquals(quality, testedItem.getQuality());
-	}
-
-	@Test
-	public void testSulfurasNegativeQualityPositiveSellin() {
-		/* quality < 0 */
-		/* 0 < sellIn */
-		final int sellIn = 5;
-		final int quality = -1;
-		setUpOneItem(NAME_SULFURAS, sellIn, quality);
-		assertEquals(sellIn, testedItem.getSellIn());
-		assertEquals(quality, testedItem.getQuality());
-	}
-
-	@Test
-	public void testSulfurasQualityAndSellinEqualsZero() {
+	public void testElixirQualityEqualsZeroAndSellInEqualsZero() {
 		/* quality = 0 */
 		/* sellIn = 0 */
 		final int sellIn = 0;
 		final int quality = 0;
-		setUpOneItem(NAME_SULFURAS, sellIn, quality);
+		updateQualityOneItem(NAME_ELIXIR, sellIn, quality);
+		assertEquals(sellIn - 1, testedItem.getSellIn());
+		assertEquals(quality, testedItem.getQuality());
+	}
+
+	@Test
+	public void testElixirQualityAndSellInGreaterThanZero() {
+		/* 0 < quality */
+		/* 0 < sellIn */
+		final int sellIn = 2;
+		final int quality = 2;
+		updateQualityOneItem(NAME_ELIXIR, sellIn, quality);
+		assertEquals(sellIn - 1, testedItem.getSellIn());
+		assertEquals(quality - 1, testedItem.getQuality());
+	}
+
+	/* Tests SULFURAS */
+	@Test
+	public void testSulfurasQualityEquals80SellinEqualsZero() {
+		/* quality = 80 */
+		/* sellIn = 0 */
+		final int sellIn = 0;
+		final int quality = 80;
+		updateQualityOneItem(NAME_SULFURAS, sellIn, quality);
 		assertEquals(sellIn, testedItem.getSellIn());
 		assertEquals(quality, testedItem.getQuality());
 	}
 
 	/* Tests BACKSTAGE */
 	@Test
-	public void testBackstageQualityLessThan48AndSellInEqualsZero() {
-		/* quality < 48 */
+	public void testBackstageSellInEqualsZero() {
 		/* sellIn = 0 */
 		final int sellIn = 0;
 		final int quality = 47;
-		setUpOneItem(NAME_BACKSTAGE, sellIn, quality);
+		updateQualityOneItem(NAME_BACKSTAGE, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
-		assertEquals(quality - quality, testedItem.getQuality());
+		assertEquals(0, testedItem.getQuality());
 	}
 
 	@Test
-	public void testBackstageQualityLessThan48AndSellInBetweenZeroAndSix() {
+	public void testBackstageQualityEquals50AndSellInNotZero() {
+		/* quality = 50 */
+		/* sellIn != 0 */
+		final int sellIn = 12;
+		final int quality = 50;
+		updateQualityOneItem(NAME_BACKSTAGE, sellIn, quality);
+		assertEquals(sellIn - 1, testedItem.getSellIn());
+		assertEquals(quality, testedItem.getQuality());
+	}
+
+	@Test
+	public void testBackstageQualityLessThan48AndSellInBetweenOneAndFive() {
 		/* quality < 48 */
-		/* 0 < sellIn < 6 */
+		/* 1 <= sellIn <= 5 */
 		final int sellIn = 1;
 		final int quality = 47;
-		setUpOneItem(NAME_BACKSTAGE, sellIn, quality);
+		updateQualityOneItem(NAME_BACKSTAGE, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality + 3, testedItem.getQuality());
 	}
 
 	@Test
-	public void testBackstageQualityEquals48AndSellInBetweenZeroAndSix() {
+	public void testBackstageQualityEquals48AndSellInBetweenOneAndFive() {
 		/* quality = 48 */
-		/* 0 < sellIn < 6 */
+		/* 1 <= sellIn <= 5 */
 		final int sellIn = 5;
 		final int quality = 48;
-		setUpOneItem(NAME_BACKSTAGE, sellIn, quality);
+		updateQualityOneItem(NAME_BACKSTAGE, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality + 2, testedItem.getQuality());
 	}
 
 	@Test
-	public void testBackstageQualityLessThan48AndSellInBetweenFiveAndEleven() {
+	public void testBackstageQualityEquals49AndSellInBetweenOneAndFive() {
+		/* quality = 49 */
+		/* 1 <= sellIn <= 5 */
+		final int sellIn = 5;
+		final int quality = 49;
+		updateQualityOneItem(NAME_BACKSTAGE, sellIn, quality);
+		assertEquals(sellIn - 1, testedItem.getSellIn());
+		assertEquals(quality + 1, testedItem.getQuality());
+	}
+
+	@Test
+	public void testBackstageQualityLessThan48AndSellInBetweenSixAndTen() {
 		/* quality < 48 */
-		/* 5 < sellIn < 11 */
+		/* 6 <= sellIn <= 10 */
 		final int sellIn = 6;
 		final int quality = 47;
-		setUpOneItem(NAME_BACKSTAGE, sellIn, quality);
+		updateQualityOneItem(NAME_BACKSTAGE, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality + 2, testedItem.getQuality());
 	}
 
 	@Test
-	public void testBackstageQualityEquals49AndSellInBetweenFiveAndEleven() {
+	public void testBackstageQualityEquals49AndSellInBetweenSixAndTen() {
 		/* quality = 49 */
-		/* 5 < sellIn < 11 */
+		/* 6 <= sellIn <= 10 */
 		final int sellIn = 10;
 		final int quality = 49;
-		setUpOneItem(NAME_BACKSTAGE, sellIn, quality);
+		updateQualityOneItem(NAME_BACKSTAGE, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality + 1, testedItem.getQuality());
 	}
 
 	@Test
-	public void testBackstageQualityLessThan49AndSellInGreaterThanTen() {
-		/* quality < 49 */
+	public void testBackstageQualityLessThan50AndSellInGreaterThanTen() {
+		/* quality < 50 */
 		/* 10 < sellIn */
 		final int sellIn = 11;
-		final int quality = 48;
-		setUpOneItem(NAME_BACKSTAGE, sellIn, quality);
+		final int quality = 49;
+		updateQualityOneItem(NAME_BACKSTAGE, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality + 1, testedItem.getQuality());
-	}
-
-	@Test
-	public void testBackstageQualityGreaterThan49AndSellInGreaterThanZero() {
-		/* 49 < quality */
-		/* 0 < sellIn */
-		final int sellIn = 1;
-		final int quality = 50;
-		setUpOneItem(NAME_BACKSTAGE, sellIn, quality);
-		assertEquals(sellIn - 1, testedItem.getSellIn());
-		assertEquals(quality, testedItem.getQuality());
-	}
-
-	@Test
-	public void testBackstageQualityGreaterThan49AndSellInLessThanOne() {
-		/* 49 < quality */
-		/* sellIn < 1 */
-		final int sellIn = 0;
-		final int quality = 50;
-		setUpOneItem(NAME_BACKSTAGE, sellIn, quality);
-		assertEquals(sellIn - 1, testedItem.getSellIn());
-		assertEquals(quality - quality, testedItem.getQuality());
 	}
 
 	/* Tests CAKE */
 	@Test
-	public void testCakeQualityGreaterThanOneSellInEqualsZero() {
+	public void testCakeQualityGreaterThanThreeAndSellInEqualsZero() {
+		/* 3 < quality */
+		/* sellIn = 0 */
+		final int sellIn = 0;
+		final int quality = 4;
+		updateQualityOneItem(NAME_CAKE, sellIn, quality);
+		assertEquals(sellIn - 1, testedItem.getSellIn());
+		assertEquals(quality - 4, testedItem.getQuality());
+	}
+
+	public void testCakeQualityEqualsThreeAndSellInEqualsZero() {
+		/* quality = 3 */
+		/* sellIn = 0 */
+		final int sellIn = 0;
+		final int quality = 3;
+		updateQualityOneItem(NAME_CAKE, sellIn, quality);
+		assertEquals(sellIn - 1, testedItem.getSellIn());
+		assertEquals(quality - 3, testedItem.getQuality());
+	}
+
+	public void testCakeQualityEqualsTwo() {
+		/* quality = 2 */
 		final int sellIn = 0;
 		final int quality = 2;
-		setUpOneItem(NAME_CAKE, sellIn, quality);
+		updateQualityOneItem(NAME_CAKE, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality - 2, testedItem.getQuality());
 	}
 
 	@Test
-	public void testCakeQualityAndSellInGreaterThanOne() {
-		final int sellIn = 2;
-		final int quality = 2;
-		setUpOneItem(NAME_CAKE, sellIn, quality);
-		assertEquals(sellIn - 1, testedItem.getSellIn());
-		assertEquals(quality - 1, testedItem.getQuality());
-	}
-
-	@Test
-	public void testCakeQualityEqualsOneAndSellInGreaterThanOne() {
-		final int sellIn = 3;
+	public void testCakeQualityEqualsOne() {
+		/* quality = 1 */
+		final int sellIn = 0;
 		final int quality = 1;
-		setUpOneItem(NAME_CAKE, sellIn, quality);
+		updateQualityOneItem(NAME_CAKE, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality - 1, testedItem.getQuality());
 	}
 
 	@Test
-	public void testCakeQualityEqualsZeroAndSellInNegative() {
-		final int sellIn = -1;
-		final int quality = -1;
-		setUpOneItem(NAME_CAKE, sellIn, quality);
+	public void testCakeQualityEqualsZero() {
+		/* quality = 0 */
+		final int sellIn = 0;
+		final int quality = 0;
+		updateQualityOneItem(NAME_CAKE, sellIn, quality);
 		assertEquals(sellIn - 1, testedItem.getSellIn());
 		assertEquals(quality, testedItem.getQuality());
+	}
+
+	@Test
+	public void testCakeQualityGreaterThanOneAndSellInGreaterThanZero() {
+		/* 1 < quality */
+		/* 0 < sellIn */
+		final int sellIn = 1;
+		final int quality = 2;
+		updateQualityOneItem(NAME_CAKE, sellIn, quality);
+		assertEquals(sellIn - 1, testedItem.getSellIn());
+		assertEquals(quality - 2, testedItem.getQuality());
 	}
 }
