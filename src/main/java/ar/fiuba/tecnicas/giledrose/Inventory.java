@@ -1,15 +1,6 @@
 package ar.fiuba.tecnicas.giledrose;
 
 public class Inventory {
-	/* TODO: ver si puedo acomodar estas definiciones en otro lugar más
-	 * apropiado */
-	private static final String NAME_BRIE = "Aged Brie";
-	private static final String NAME_SULFURAS = "Sulfuras, Hand of Ragnaros";
-	private static final String NAME_BACKSTAGE =
-			"Backstage passes to a TAFKAL80ETC concert";
-	private static final String NAME_CAKE = "Conjured Mana Cake";
-
-	/* TODO: Aplicar replace with primitive object */
 	private static final int MIN_QUALITY = 0;
 	private static final int MAX_QUALITY = 50;
 
@@ -33,123 +24,151 @@ public class Inventory {
 	}
 
 	public void updateQuality() {
-		/* TODO: ver si puedo agrupar el update de cada item en una clase
-		 * interna privada, para mayor ordenamiento y acortar el método */
+		ItemUpdate itemToUpdate = new ItemUpdate();
 		for (int i = 0; i < items.length; i++) {
-			Item itemToUpdate = items[i];
-
-			if (isItemConcertPasses(itemToUpdate)) {
-				incrementItemQualityByOne(itemToUpdate);
-				if (isItemSellInLessThanEleven(itemToUpdate)) {
-					incrementItemQualityByOne(itemToUpdate);
-				}
-				if (isItemSellInLessThanSix(itemToUpdate)) {
-					incrementItemQualityByOne(itemToUpdate);
-				}
-				decrementItemSellInByOne(itemToUpdate);
-				if (isItemExpired(itemToUpdate)) {
-					setItemQualityToZero(itemToUpdate);
-				}
-				return;
-			}
-
-			if (isItemSulfuras(itemToUpdate)) {
-				return;
-			}
-
-			decrementItemSellInByOne(itemToUpdate);
-
-			if (isItemAgedBrie(itemToUpdate)) {
-				incrementItemQualityByOne(itemToUpdate);
-				if (isItemExpired(itemToUpdate)) {
-					incrementItemQualityByOne(itemToUpdate);
-				}
-				return;
-			}
-
-			if (isItemConjuredCake(itemToUpdate)) {
-				decrementItemQualityByTwo(itemToUpdate);
-				if (isItemExpired(itemToUpdate)) {
-					decrementItemQualityByTwo(itemToUpdate);
-				}
-				return;
-			}
-
-			decrementItemQualityByOne(itemToUpdate);
-			if (isItemExpired(itemToUpdate)) {
-				decrementItemQualityByOne(itemToUpdate);
-			}
+			itemToUpdate.setItem(items[i]);
+			itemToUpdate.update();
 		}
 	}
 
-	/* TODO: ver si puedo meter estos métodos en una clase */
-	private boolean isItemAgedBrie(Item item) {
-		return item.getName() == NAME_BRIE;
-	}
+	private class ItemUpdate {
+		private static final String NAME_BRIE = "Aged Brie";
+		private static final String NAME_SULFURAS =
+				"Sulfuras, Hand of Ragnaros";
+		private static final String NAME_BACKSTAGE =
+				"Backstage passes to a TAFKAL80ETC concert";
+		private static final String NAME_CAKE = "Conjured Mana Cake";
 
-	private boolean isItemSulfuras(Item item) {
-		return item.getName() == NAME_SULFURAS;
-	}
+		private Item item;
 
-	private boolean isItemConcertPasses(Item item) {
-		return item.getName() == NAME_BACKSTAGE;
-	}
-
-	private boolean isItemConjuredCake(Item item) {
-		return item.getName() == NAME_CAKE;
-	}
-
-	private boolean isItemQualityGreaterThanMaximum(Item item) {
-		return item.getQuality() > MAX_QUALITY;
-	}
-
-	private boolean isItemQualityLessThanMinimum(Item item) {
-		return item.getQuality() < MIN_QUALITY;
-	}
-
-	private boolean isItemExpired(Item item) {
-		return item.getSellIn() < 0;
-	}
-
-	private boolean isItemSellInLessThanSix(Item item) {
-		return item.getSellIn() < 6;
-	}
-
-	private boolean isItemSellInLessThanEleven(Item item) {
-		return item.getSellIn() < 11;
-	}
-
-	private void incrementItemQuality(Item item, int incrementInQuality) {
-		item.setQuality(item.getQuality() + incrementInQuality);
-		if (isItemQualityGreaterThanMaximum(item)) {
-			item.setQuality(MAX_QUALITY);
+		public void setItem(Item item) {
+			this.item = item;
 		}
-	}
 
-	private void decrementItemQuality(Item item, int decrementInQuality) {
-		item.setQuality(item.getQuality() - decrementInQuality);
-		if (isItemQualityLessThanMinimum(item)) {
-			item.setQuality(MIN_QUALITY);
+		public void update() {
+			if (isAgedBrie()) {
+				updateAgedBrie();
+				return;
+			}
+			if (isConcertPasses()) {
+				updateConcertPasses();
+				return;
+			}
+			if (isConjuredCake()) {
+				updateConjuredCake();
+				return;
+			}
+			if (!isSulfuras()) {
+				updateOrdinaryItem();
+			}
 		}
-	}
 
-	private void incrementItemQualityByOne(Item item) {
-		incrementItemQuality(item, 1);
-	}
+		private void updateAgedBrie() {
+			incrementQualityByOne();
+			decrementSellInByOne();
+			if (isExpired()) {
+				incrementQualityByOne();
+			}
+		}
 
-	private void decrementItemQualityByOne(Item item) {
-		decrementItemQuality(item, 1);
-	}
+		private void updateConcertPasses() {
+			incrementQualityByOne();
+			if (isSellInLessThanEleven()) {
+				incrementQualityByOne();
+			}
+			if (isSellInLessThanSix()) {
+				incrementQualityByOne();
+			}
+			decrementSellInByOne();
+			if (isExpired()) {
+				setQualityToZero();
+			}
+		}
 
-	private void decrementItemQualityByTwo(Item item) {
-		decrementItemQuality(item, 2);
-	}
+		private void updateConjuredCake() {
+			decrementQualityByTwo();
+			decrementSellInByOne();
+			if (isExpired()) {
+				decrementQualityByTwo();
+			}
+		}
 
-	private void setItemQualityToZero(Item item) {
-		item.setQuality(0);
-	}
+		private void updateOrdinaryItem() {
+			decrementQualityByOne();
+			decrementSellInByOne();
+			if (isExpired()) {
+				decrementQualityByOne();
+			}
+		}
 
-	private void decrementItemSellInByOne(Item item) {
-		item.setSellIn(item.getSellIn() - 1);
+		private boolean isAgedBrie() {
+			return item.getName() == NAME_BRIE;
+		}
+
+		private boolean isSulfuras() {
+			return item.getName() == NAME_SULFURAS;
+		}
+
+		private boolean isConcertPasses() {
+			return item.getName() == NAME_BACKSTAGE;
+		}
+
+		private boolean isConjuredCake() {
+			return item.getName() == NAME_CAKE;
+		}
+
+		private boolean isQualityGreaterThanMaximum() {
+			return item.getQuality() > MAX_QUALITY;
+		}
+
+		private boolean isQualityLessThanMinimum() {
+			return item.getQuality() < MIN_QUALITY;
+		}
+
+		private boolean isExpired() {
+			return item.getSellIn() < 0;
+		}
+
+		private boolean isSellInLessThanSix() {
+			return item.getSellIn() < 6;
+		}
+
+		private boolean isSellInLessThanEleven() {
+			return item.getSellIn() < 11;
+		}
+
+		private void incrementQuality(int incrementInQuality) {
+			item.setQuality(item.getQuality() + incrementInQuality);
+			if (isQualityGreaterThanMaximum()) {
+				item.setQuality(MAX_QUALITY);
+			}
+		}
+
+		private void decrementQuality(int decrementInQuality) {
+			item.setQuality(item.getQuality() - decrementInQuality);
+			if (isQualityLessThanMinimum()) {
+				item.setQuality(MIN_QUALITY);
+			}
+		}
+
+		private void incrementQualityByOne() {
+			incrementQuality(1);
+		}
+
+		private void decrementQualityByOne() {
+			decrementQuality(1);
+		}
+
+		private void decrementQualityByTwo() {
+			decrementQuality(2);
+		}
+
+		private void setQualityToZero() {
+			item.setQuality(0);
+		}
+
+		private void decrementSellInByOne() {
+			item.setSellIn(item.getSellIn() - 1);
+		}
 	}
 }
