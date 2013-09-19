@@ -1,9 +1,8 @@
 package ar.fiuba.tecnicas.giledrose;
 
-public class Inventory {
-	private static final int MIN_QUALITY = 0;
-	private static final int MAX_QUALITY = 50;
+import ar.fiuba.tecnicas.giledrose.utils.Range;
 
+public class Inventory {
 	private Item[] items;
 
 	public Inventory(Item[] items) {
@@ -39,6 +38,11 @@ public class Inventory {
 				"Backstage passes to a TAFKAL80ETC concert";
 		private static final String NAME_CAKE = "Conjured Mana Cake";
 
+		private static final int MIN_QUALITY = 0;
+		private static final int MAX_QUALITY = 50;
+
+		private Range<Integer> rangeOfAllowedQuality = new Range<Integer>(
+				MIN_QUALITY, MAX_QUALITY);
 		private Item item;
 
 		public void setItem(Item item) {
@@ -117,14 +121,6 @@ public class Inventory {
 			return item.getName() == NAME_CAKE;
 		}
 
-		private boolean isQualityGreaterThanMaximum() {
-			return item.getQuality() > MAX_QUALITY;
-		}
-
-		private boolean isQualityLessThanMinimum() {
-			return item.getQuality() < MIN_QUALITY;
-		}
-
 		private boolean isExpired() {
 			return item.getSellIn() < 0;
 		}
@@ -139,14 +135,14 @@ public class Inventory {
 
 		private void incrementQuality(int incrementInQuality) {
 			item.setQuality(item.getQuality() + incrementInQuality);
-			if (isQualityGreaterThanMaximum()) {
+			if (rangeOfAllowedQuality.notIncludes(item.getQuality())) {
 				item.setQuality(MAX_QUALITY);
 			}
 		}
 
 		private void decrementQuality(int decrementInQuality) {
 			item.setQuality(item.getQuality() - decrementInQuality);
-			if (isQualityLessThanMinimum()) {
+			if (rangeOfAllowedQuality.notIncludes(item.getQuality())) {
 				item.setQuality(MIN_QUALITY);
 			}
 		}
